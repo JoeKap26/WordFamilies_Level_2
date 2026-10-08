@@ -462,11 +462,27 @@
     #finalHistoryRecord table { width:100%;border-collapse:collapse;font-size:.9rem; }
     #finalHistoryRecord caption { font-weight:700;padding:8px; }
     #finalHistoryRecord th,#finalHistoryRecord td { padding:8px;border-bottom:1px solid #cfddfa;text-align:center; }
-  </style>
+  
+/* Word-family read popup */
+#wordReadDialog{border:0;border-radius:22px;padding:24px;width:min(92vw,570px);box-shadow:0 20px 70px #0005;text-align:center;color:#243451}
+#wordReadDialog::backdrop{background:#17233b99}
+#wordReadDialog .sound-parts{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:20px 0}
+#wordReadDialog .sound-part{font-size:clamp(2rem,7vw,3rem);font-weight:750;padding:8px 13px;border-radius:12px;background:#eaf0fa;color:#213858}
+#wordReadDialog .sound-part.active{background:#ffe166;color:#1c2b42}
+#wordReadDialog .sound-part.all{background:#c9f2d5}
+#wordReadDialog .read-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+#wordReadDialog .read-actions button{padding:12px 16px;border:0;border-radius:12px;background:#22529b;color:white;font-weight:700;cursor:pointer}
+
+#wordReadDialog .read-navigation button{background:#286b70}
+#wordReadDialog .read-navigation button[hidden]{display:none}
+#wordReadDialog .read-sentence{font-size:1.3rem;line-height:1.9}
+#wordReadDialog .read-sentence span.active{background:#ffe166;border-radius:5px}
+#wordReadDialog .read-status{color:#52617a;min-height:1.5em}
+</style>
   
 </head>
 <body>
-  <dialog id="parentSettings" aria-label="Parent Settings"><h2>Parent Settings</h2><div id="parentSettingsContent"></div><button class="nav" id="closeParentSettings" type="button">Done</button></dialog>
+  <dialog id="parentSettings" aria-label="Parent Settings"><h2>Parent Settings</h2><div id="parentSettingsContent"></div></dialog>
   <dialog class="welcome-notice" id="welcomeNotice" aria-label="Welcome" aria-describedby="welcomeNoticeMessage">
     <p id="welcomeNoticeMessage">I created this entire word-family project for Elara and Ari! Names and progress are saved in your browser, clearing the site’s stored data removes them.</p>
     <form method="dialog"><button type="submit" autofocus>OK</button></form>
@@ -619,6 +635,7 @@
     <footer><p id="learnerFooter">Elara and Ari • Love, Dad</p><button class="change-name" id="resetProgress" type="button">Reset Progress</button></footer>
   </main>
   <div class="burst" id="burst" aria-hidden="true">🌟</div>
+<dialog id="wordReadDialog" aria-labelledby="wordReadTitle"><h2 id="wordReadTitle">Read Along</h2><div id="wordReadParts" class="sound-parts"></div><div id="wordReadSentence" class="read-sentence"></div><p id="wordReadStatus" class="read-status" role="status">Choose how to read.</p><div class="read-actions"><button type="button" id="readWholeWord">🔊 Read Word</button></div><div class="read-actions read-navigation"><button type="button" id="readPrevious">← Previous Word</button><button type="button" id="readNext">Next Word →</button></div></dialog>
   <script src="data.js"></script>
   <script src="legacy-family-order.js"></script>
   <script src="sentences.js"></script>
@@ -726,6 +743,8 @@
       let target = null;
 
       const audioPlayer = new Audio();
+      // One playback speed for every MP3 activity, including reading popups.
+      const AUDIO_PLAYBACK_SPEED = 0.65;
       audioPlayer.preload = 'auto';
       let activeAudio = null;
       let autoAdvanceTimer = null;
@@ -747,7 +766,7 @@
             autoAdvanceTimer = null;
             autoAdvancePending = false;
             if (generation === autoAdvanceGeneration && stillCurrent()) next();
-          }, 2000);
+          }, 1000);
         };
         if (activeAudio) {
           const audio = activeAudio, ended = audio.onended, failed = audio.onerror;
@@ -882,6 +901,8 @@ if (completed && !label) {
         const source = `audio/${kind}/${audioFileName(value)}.mp3?v=level2-remaining50-v1`;
         const audio = audioPlayer;
         audio.src = source;
+        audio.playbackRate = AUDIO_PLAYBACK_SPEED;
+        audio.preservesPitch = true;
         activeAudio = audio;
         let settled = false;
         const failed = () => {
@@ -969,10 +990,7 @@ if (completed && !label) {
             if (autoAdvancePending) return;
             if (sentenceTarget) { handleSentenceAnswer(item, button); return; }
             // A new tap interrupts the previous recording and plays immediately.
-            stopAudio();
-            sentenceQueue.push({ item, button });
-            button.classList.add('queued');
-            playNextSentence();
+            showReadPopup({kind:'sentences',word:item.word,sentence:item.text,file:item.file,after:()=>{button.classList.add('heard');sentenceMessage.textContent='Great listening! Try reading it yourself.';}});
           });
           sentenceGrid.append(button);
         });
@@ -1003,7 +1021,7 @@ if (completed && !label) {
         if (!sentenceTarget) {
           const remaining = remainingSentences();
           if (!remaining.length) { updateSentenceChallenge(); return; }
-          sentenceTarget = remaining[0];
+          sentenceTarget = remaining[Math.floor(Math.random() * remaining.length)];
         }
         playChallengeSentence(sentenceTarget);
         sentenceMessage.textContent = 'Listen carefully… then tap the sentence you heard!';
@@ -1052,6 +1070,146 @@ if (completed && !label) {
         saveProgress();
         showFamilySelection(true);
       });
+
+
+      // Popup uses phoneme MP3s rather than speech synthesis letter names.
+      const wordReadDialog = document.getElementById('wordReadDialog');
+      const wordReadParts = document.getElementById('wordReadParts');
+      const wordReadSentence = document.getElementById('wordReadSentence');
+      const wordReadStatus = document.getElementById('wordReadStatus');
+      let readPopupEntry = null, readPopupToken = 0, readPopupTimer = null;
+      const phonemeCodes = {
+        a:'a-short',b:'b',c:'k',d:'d',e:'e-short',f:'f',g:'g',h:'h',i:'i-short',j:'j',k:'k',l:'l',m:'m',n:'n',o:'o-short',p:'p',q:'k',r:'r',s:'s',t:'t',u:'u-short',v:'v',w:'w',x:'k-s',y:'y',z:'z',
+        sh:'sh',ch:'ch',th:'th',wh:'w',ph:'f',ck:'k',ng:'ng',qu:'k-w',ee:'ee',oo:'oo',ai:'ai',ay:'ai',oa:'oa',igh:'igh',ar:'ar',or:'or',er:'er',ir:'er',ur:'er',ow:'ow',ou:'ow',oi:'oi',oy:'oi',au:'aw',aw:'aw'
+      };
+      function soundChunks(word) {
+        const clean = word.toLowerCase().replace(/[^a-z]/g,'');
+        const tokens = clean.match(/igh|tch|sh|ch|th|wh|ph|ck|ng|qu|ee|oo|ai|ay|oa|ar|or|er|ir|ur|ow|ou|oi|oy|au|aw|[a-z]/g) || [];
+        // A letter sequence is not always a phoneme. Only enable Sound It Out
+        // for simple decodable CVC words, common digraphs and vowel teams.
+        return tokens.map(part=>({part,code:phonemeCodes[part] || null}));
+      }
+      function clearPopupTiming(){ if(readPopupTimer!==null)clearInterval(readPopupTimer);readPopupTimer=null; }
+      function popupCancelAudio(){readPopupToken++;clearPopupTiming();stopAudio();}
+      function closeReadPopup(){popupCancelAudio();if(wordReadDialog.open)wordReadDialog.close();}
+      function renderPopupParts(word){
+        wordReadParts.replaceChildren();
+        soundChunks(word).forEach(({part})=>{const el=document.createElement('span');el.className='sound-part';el.textContent=part;wordReadParts.append(el);});
+      }
+      function renderPopupSentence(sentence){
+        wordReadSentence.replaceChildren();
+        (sentence.match(/\S+/g)||[]).forEach((word,i)=>{const el=document.createElement('span');el.textContent=word;wordReadSentence.append(el,document.createTextNode(' '));});
+      }
+      const readPrevious = document.getElementById('readPrevious');
+      const readNext = document.getElementById('readNext');
+      function popupSequence(){
+        if(!readPopupEntry)return [];
+        if(readPopupEntry.kind==='sentences'){
+          return sentenceData.filter(item=>item.family===families[index].family)
+            .map(item=>({kind:'sentences',word:item.word,sentence:item.text,file:item.file,
+              after:()=>{sentenceMessage.textContent='Great listening! Try reading it yourself.';}}));
+        }
+        return families[index].words.map(word=>({kind:'words',word,sentence:wordExampleSentence(word),
+          after:()=>{readWords.add(keyFor(word));saveProgress();message.textContent=`You heard “${word}.”`;}}));
+      }
+      function popupPosition(){
+        const entries=popupSequence();
+        const position=entries.findIndex(item=>readPopupEntry.kind==='sentences'
+          ? item.file===readPopupEntry.file : item.word===readPopupEntry.word);
+        return {entries,position};
+      }
+      function updatePopupNavigation(){
+        const {entries,position}=popupPosition();
+        const sentence=readPopupEntry?.kind==='sentences';
+        readPrevious.textContent=sentence?'← Previous Sentence':'← Previous Word';
+        readNext.textContent=sentence?'Next Sentence →':'Next Word →';
+        readPrevious.hidden=position<=0;
+        readNext.hidden=position<0||position>=entries.length-1;
+      }
+      function navigatePopup(direction){
+        const {entries,position}=popupPosition();
+        const target=entries[position+direction];
+        if(target)showReadPopup(target);
+      }
+      readPrevious.addEventListener('click',()=>navigatePopup(-1));
+      readNext.addEventListener('click',()=>navigatePopup(1));
+      function showReadPopup(entry){
+        popupCancelAudio();readPopupEntry=entry;
+        document.getElementById('wordReadTitle').textContent=entry.word ? `Read: ${entry.word}` : 'Read Along';
+        renderPopupParts(entry.word || '');
+        renderPopupSentence(entry.sentence || '');
+        
+        wordReadStatus.textContent='Tap Read Word to listen again.';
+        if(!wordReadDialog.open)wordReadDialog.showModal();
+        updatePopupNavigation();
+        readPopupWhole();
+      }
+      function popupPlayFile(path,onDone,onError){
+        stopAudio();const token=readPopupToken;
+        const player=audioPlayer;activeAudio=player;player.src=path;player.playbackRate=AUDIO_PLAYBACK_SPEED;
+        player.preservesPitch=true;
+        player.onended=()=>{if(token===readPopupToken){activeAudio=null;onDone?.();}};
+        player.onerror=()=>{if(token===readPopupToken){activeAudio=null;onError?.();}};
+        player.play().catch(()=>{if(token===readPopupToken)onError?.();});
+      }
+      function readPopupWhole(){
+        if(!readPopupEntry)return;
+        popupCancelAudio();const token=readPopupToken;
+        const entry=readPopupEntry;
+        const parts=[...wordReadParts.children],words=[...wordReadSentence.querySelectorAll('span')];
+        parts.forEach(p=>p.classList.remove('active','all'));words.forEach(p=>p.classList.remove('active'));
+        wordReadStatus.textContent='Reading...';
+        const path=entry.kind==='sentences' ? `audio/sentences/${audioFileName(entry.file)}.mp3` : `audio/words/${audioFileName(entry.word)}.mp3`;
+        popupPlayFile(path,()=>{if(token!==readPopupToken)return;clearPopupTiming();wordReadStatus.textContent='Finished! Replay or sound it out.';entry.after?.();},()=>{wordReadStatus.textContent='Audio unavailable.';});
+        if(entry.kind==='words')parts.forEach(p=>p.classList.add('all'));
+        else readPopupTimer=setInterval(()=>{
+          if(token!==readPopupToken)return;
+          const duration = audioPlayer.duration;
+          if (!Number.isFinite(duration) || duration <= 0) return;
+
+          // Advance the highlight speed 150 milliseconds earlier
+          const highlightLead = 0.25;
+
+          const adjustedTime = Math.min(
+            duration,
+            audioPlayer.currentTime + highlightLead
+          );
+
+          const idx = Math.min(
+  words.length - 1,
+  Math.floor((adjustedTime / duration) * words.length)
+);
+          words.forEach((p,i)=>p.classList.toggle('active',i===idx));
+        },60);
+      }
+      function readPopupSounds(){
+        if(!readPopupEntry?.word)return;
+        popupCancelAudio();const token=readPopupToken,entry=readPopupEntry;
+        const chunks=soundChunks(entry.word),spans=[...wordReadParts.children];
+        if(chunks.some(x=>!x.code)){wordReadStatus.textContent='This word needs a reviewed phonics recording.';return;}
+        let i=0;
+        function advance(){
+          if(token!==readPopupToken)return;
+          spans.forEach((p,j)=>{p.classList.toggle('active',j===i);p.classList.remove('all');});
+          if(i===chunks.length){
+            spans.forEach(p=>{p.classList.remove('active');p.classList.add('all');});
+            wordReadStatus.textContent='Now blend the whole word.';
+            popupPlayFile(`audio/words/${audioFileName(entry.word)}.mp3`,()=>{if(token===readPopupToken){wordReadStatus.textContent='Great reading!';entry.after?.();}},()=>{wordReadStatus.textContent='Whole word recording unavailable.';});
+            return;
+          }
+          const code=chunks[i++].code;
+          wordReadStatus.textContent='Sound '+i+' of '+chunks.length;
+          popupPlayFile(`audio/phonemes/${code}.mp3`,advance,()=>{wordReadStatus.textContent='Sound recording unavailable.';});
+        }
+        advance();
+      }
+      document.getElementById('readWholeWord').addEventListener('click',readPopupWhole);
+      
+      
+      wordReadDialog.addEventListener('cancel',event=>{event.preventDefault();closeReadPopup();});
+      // Close only when the pointer lands on the dialog backdrop.
+      wordReadDialog.addEventListener('click',event=>{if(event.target===wordReadDialog)closeReadPopup();});
+      function wordExampleSentence(word){return sentenceData.find(item=>item.family===families[index].family && item.word.toLowerCase()===word.toLowerCase())?.text || '';}
 
       function speakWord(word, after) {
         playRecording('words', word, after);
@@ -1170,7 +1328,7 @@ if (completed && !label) {
           message.textContent = `You found all ${families[index].words.length} words in this family!`;
           return;
         }
-        target = remaining[0];
+        target = remaining[Math.floor(Math.random() * remaining.length)];
         challengeButton.classList.add('active');
         challengeButton.textContent = '🔁 Hear it again';
         message.textContent = 'Listen carefully… then tap the word!';
@@ -1210,12 +1368,12 @@ if (completed && !label) {
           return;
         }
         const progressKey = keyFor(word);
-        speakWord(word, () => {
+        showReadPopup({kind:'words',word,sentence:wordExampleSentence(word),after:()=>{
           readWords.add(progressKey);
           if (!foundWords.has(progressKey)) button.classList.add('read');
           saveProgress();
           message.textContent = `You heard “${word}.”`;
-        });
+        }});
       }
 
       function render() {
@@ -1770,7 +1928,8 @@ if (completed && !label) {
       layout('layoutPreviousFamily').onclick=()=>resumeFamily(nearbyUnfinishedFamily(-1));
       layout('layoutContinue').onclick=()=>resumeFamily(nearbyUnfinishedFamily(1));
       layout('parentSettingsButton').onclick=()=>{ensureFinalRecord();updateAllQuizTotals();layout('parentSettings').showModal();};
-      layout('closeParentSettings').onclick=()=>layout('parentSettings').close();
+      layout('parentSettings').addEventListener('click',event=>{if(event.target===layout('parentSettings'))layout('parentSettings').close();});
+      
       function setLayoutText(id,value){if(layout(id).textContent!==value)layout(id).textContent=value;}
       function syncLayout(){
         const picking=practicePage.hidden;

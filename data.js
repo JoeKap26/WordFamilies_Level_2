@@ -7,11 +7,7 @@ window.WORD_FAMILIES = [
       "tax",
       "fax",
       "max",
-      "sax",
-      "lax",
-      "flax",
-      "relax",
-      "earwax"
+      "sax"
     ]
   },
   {
@@ -22,11 +18,7 @@ window.WORD_FAMILIES = [
       "plant",
       "rant",
       "slant",
-      "chant",
-      "grant",
-      "can't",
-      "scant",
-      "transplant"
+      "chant"
     ]
   },
   {
@@ -37,11 +29,7 @@ window.WORD_FAMILIES = [
       "peg",
       "egg",
       "keg",
-      "dreg",
-      "meg",
-      "greg",
-      "nutmeg",
-      "pegleg"
+      "dreg"
     ]
   },
   {
@@ -52,11 +40,7 @@ window.WORD_FAMILIES = [
       "mend",
       "send",
       "spend",
-      "blend",
-      "friend",
-      "trend",
-      "pretend",
-      "weekend"
+      "blend"
     ]
   },
   {
@@ -67,11 +51,7 @@ window.WORD_FAMILIES = [
       "peck",
       "check",
       "speck",
-      "wreck",
-      "trek",
-      "paycheck",
-      "shipwreck",
-      "turtleneck"
+      "wreck"
     ]
   },
   {
@@ -82,11 +62,7 @@ window.WORD_FAMILIES = [
       "wish",
       "swish",
       "squish",
-      "finish",
-      "selfish",
-      "radish",
-      "relish",
-      "polish"
+      "finish"
     ]
   },
   {
@@ -97,11 +73,7 @@ window.WORD_FAMILIES = [
       "print",
       "tint",
       "lint",
-      "flint",
-      "sprint",
-      "squint",
-      "splint",
-      "glint"
+      "flint"
     ]
   },
   {
@@ -112,11 +84,7 @@ window.WORD_FAMILIES = [
       "ox",
       "pox",
       "lox",
-      "inbox",
-      "mailbox",
-      "sandbox",
-      "toolbox",
-      "lunchbox"
+      "inbox"
     ]
   },
   {
@@ -127,11 +95,7 @@ window.WORD_FAMILIES = [
       "pod",
       "rod",
       "sod",
-      "clod",
-      "plod",
-      "prod",
-      "tripod",
-      "fishing rod"
+      "clod"
     ]
   },
   {
@@ -142,11 +106,7 @@ window.WORD_FAMILIES = [
       "strong",
       "wrong",
       "gong",
-      "along",
-      "belong",
-      "lifelong",
-      "sing-song",
-      "headstrong"
+      "along"
     ]
   },
   {
@@ -157,11 +117,7 @@ window.WORD_FAMILIES = [
       "pond",
       "beyond",
       "respond",
-      "blond",
-      "abscond",
-      "fishpond",
-      "millpond",
-      "duck pond"
+      "blond"
     ]
   },
   {
@@ -172,11 +128,7 @@ window.WORD_FAMILIES = [
       "up",
       "hiccup",
       "pickup",
-      "makeup",
-      "cleanup",
-      "setup",
-      "backup",
-      "buttercup"
+      "makeup"
     ]
   },
   {
@@ -187,11 +139,7 @@ window.WORD_FAMILIES = [
       "hush",
       "rush",
       "crush",
-      "flush",
-      "lush",
-      "mush",
-      "slush",
-      "plush"
+      "flush"
     ]
   },
   {
@@ -202,11 +150,7 @@ window.WORD_FAMILIES = [
       "dunk",
       "junk",
       "trunk",
-      "sunk",
-      "skunk",
-      "hunk",
-      "shrunk",
-      "chipmunk"
+      "sunk"
     ]
   },
   {
@@ -217,11 +161,7 @@ window.WORD_FAMILIES = [
       "rung",
       "sung",
       "young",
-      "swung",
-      "stung",
-      "sprung",
-      "flung",
-      "strung"
+      "swung"
     ]
   },
   {
@@ -232,11 +172,7 @@ window.WORD_FAMILIES = [
       "dust",
       "must",
       "rust",
-      "trust",
-      "just",
-      "gust",
-      "thrust",
-      "adjust"
+      "trust"
     ]
   },
   {
@@ -247,11 +183,7 @@ window.WORD_FAMILIES = [
       "save",
       "wave",
       "brave",
-      "grave",
-      "shave",
-      "crave",
-      "pave",
-      "behave"
+      "grave"
     ]
   },
   {
@@ -262,11 +194,7 @@ window.WORD_FAMILIES = [
       "tire",
       "wire",
       "dire",
-      "mire",
-      "spire",
-      "inspire",
-      "campfire",
-      "bonfire"
+      "mire"
     ]
   },
   {
@@ -277,11 +205,7 @@ window.WORD_FAMILIES = [
       "like",
       "spike",
       "pike",
-      "strike",
-      "trike",
-      "dislike",
-      "alike",
-      "motorbike"
+      "strike"
     ]
   },
   {
@@ -292,11 +216,7 @@ window.WORD_FAMILIES = [
       "time",
       "chime",
       "rhyme",
-      "slime",
-      "crime",
-      "prime",
-      "bedtime",
-      "playtime"
+      "slime"
     ]
   },
   {
@@ -307,11 +227,7 @@ window.WORD_FAMILIES = [
       "site",
       "white",
       "write",
-      "quite",
-      "spite",
-      "invite",
-      "polite",
-      "excite"
+      "quite"
     ]
   },
   {
@@ -322,11 +238,7 @@ window.WORD_FAMILIES = [
       "five",
       "hive",
       "strive",
-      "thrive",
-      "chive",
-      "beehive",
-      "high-five",
-      "skydive"
+      "thrive"
     ]
   },
   {
@@ -337,11 +249,7 @@ window.WORD_FAMILIES = [
       "more",
       "sore",
       "store",
-      "shore",
-      "wore",
-      "chore",
-      "snore",
-      "explore"
+      "shore"
     ]
   },
   {
@@ -352,11 +260,7 @@ window.WORD_FAMILIES = [
       "hose",
       "nose",
       "pose",
-      "rose",
-      "those",
-      "prose",
-      "suppose",
-      "expose"
+      "rose"
     ]
   },
   {
@@ -367,11 +271,7 @@ window.WORD_FAMILIES = [
       "wrote",
       "quote",
       "tote",
-      "remote",
-      "devote",
-      "promote",
-      "footnote",
-      "keynote"
+      "remote"
     ]
   },
   {
@@ -382,11 +282,7 @@ window.WORD_FAMILIES = [
       "phone",
       "stone",
       "alone",
-      "tone",
-      "zone",
-      "throne",
-      "drone",
-      "prone"
+      "tone"
     ]
   },
   {
@@ -397,11 +293,7 @@ window.WORD_FAMILIES = [
       "slope",
       "cope",
       "nope",
-      "pope",
-      "scope",
-      "dope",
-      "mope",
-      "telescope"
+      "pope"
     ]
   },
   {
@@ -412,11 +304,7 @@ window.WORD_FAMILIES = [
       "smoke",
       "spoke",
       "broke",
-      "choke",
-      "woke",
-      "stroke",
-      "cowpoke",
-      "artichoke"
+      "choke"
     ]
   },
   {
@@ -427,11 +315,7 @@ window.WORD_FAMILIES = [
       "nail",
       "pail",
       "rail",
-      "sail",
-      "tail",
-      "trail",
-      "snail",
-      "jail"
+      "sail"
     ]
   },
   {
@@ -442,11 +326,7 @@ window.WORD_FAMILIES = [
       "drain",
       "gain",
       "rain",
-      "train",
-      "pain",
-      "plain",
-      "stain",
-      "grain"
+      "train"
     ]
   },
   {
@@ -457,11 +337,7 @@ window.WORD_FAMILIES = [
       "meat",
       "seat",
       "treat",
-      "cheat",
-      "neat",
-      "wheat",
-      "repeat",
-      "defeat"
+      "cheat"
     ]
   },
   {
@@ -472,11 +348,7 @@ window.WORD_FAMILIES = [
       "heel",
       "peel",
       "reel",
-      "wheel",
-      "kneel",
-      "steel",
-      "cartwheel",
-      "pinwheel"
+      "wheel"
     ]
   },
   {
@@ -487,11 +359,7 @@ window.WORD_FAMILIES = [
       "sheet",
       "sweet",
       "beet",
-      "fleet",
-      "greet",
-      "sleet",
-      "street",
-      "tweet"
+      "fleet"
     ]
   },
   {
@@ -502,11 +370,7 @@ window.WORD_FAMILIES = [
       "load",
       "goad",
       "upload",
-      "unload",
-      "reload",
-      "railroad",
-      "payload",
-      "workload"
+      "unload"
     ]
   },
   {
@@ -517,11 +381,7 @@ window.WORD_FAMILIES = [
       "cloak",
       "croak",
       "red oak",
-      "white oak",
-      "pin oak",
-      "live oak",
-      "black oak",
-      "bur oak"
+      "white oak"
     ]
   },
   {
@@ -532,11 +392,7 @@ window.WORD_FAMILIES = [
       "goat",
       "float",
       "moat",
-      "throat",
-      "gloat",
-      "sailboat",
-      "rowboat",
-      "raincoat"
+      "throat"
     ]
   },
   {
@@ -547,11 +403,7 @@ window.WORD_FAMILIES = [
       "coil",
       "foil",
       "soil",
-      "spoil",
-      "broil",
-      "toil",
-      "tinfoil",
-      "topsoil"
+      "spoil"
     ]
   },
   {
@@ -562,11 +414,7 @@ window.WORD_FAMILIES = [
       "toy",
       "soy",
       "annoy",
-      "enjoy",
-      "cowboy",
-      "decoy",
-      "employ",
-      "destroy"
+      "enjoy"
     ]
   },
   {
@@ -577,11 +425,7 @@ window.WORD_FAMILIES = [
       "shout",
       "spout",
       "sprout",
-      "about",
-      "scout",
-      "trout",
-      "snout",
-      "clout"
+      "about"
     ]
   },
   {
@@ -592,11 +436,7 @@ window.WORD_FAMILIES = [
       "light",
       "might",
       "night",
-      "right",
-      "sight",
-      "tight",
-      "flight",
-      "fright"
+      "right"
     ]
   },
   {
@@ -607,11 +447,7 @@ window.WORD_FAMILIES = [
       "fair",
       "hair",
       "pair",
-      "stair",
-      "repair",
-      "unfair",
-      "armchair",
-      "wheelchair"
+      "stair"
     ]
   },
   {
@@ -622,11 +458,7 @@ window.WORD_FAMILIES = [
       "far",
       "jar",
       "star",
-      "tar",
-      "scar",
-      "guitar",
-      "afar",
-      "bazaar"
+      "tar"
     ]
   },
   {
@@ -637,11 +469,7 @@ window.WORD_FAMILIES = [
       "dark",
       "lark",
       "park",
-      "shark",
-      "mark",
-      "spark",
-      "stark",
-      "embark"
+      "shark"
     ]
   },
   {
@@ -652,11 +480,7 @@ window.WORD_FAMILIES = [
       "harm",
       "charm",
       "warm",
-      "alarm",
-      "swarm",
-      "forearm",
-      "disarm",
-      "underarm"
+      "alarm"
     ]
   },
   {
@@ -667,11 +491,7 @@ window.WORD_FAMILIES = [
       "dart",
       "part",
       "smart",
-      "start",
-      "chart",
-      "heart",
-      "tart",
-      "apart"
+      "start"
     ]
   },
   {
@@ -682,11 +502,7 @@ window.WORD_FAMILIES = [
       "hear",
       "near",
       "year",
-      "clear",
-      "cheer",
-      "gear",
-      "rear",
-      "spear"
+      "clear"
     ]
   },
   {
@@ -697,11 +513,7 @@ window.WORD_FAMILIES = [
       "find",
       "kind",
       "mind",
-      "behind",
-      "grind",
-      "remind",
-      "rewind",
-      "unkind"
+      "behind"
     ]
   },
   {
@@ -712,11 +524,7 @@ window.WORD_FAMILIES = [
       "fold",
       "gold",
       "hold",
-      "told",
-      "bold",
-      "mold",
-      "sold",
-      "scold"
+      "told"
     ]
   },
   {
@@ -727,11 +535,7 @@ window.WORD_FAMILIES = [
       "how",
       "now",
       "wow",
-      "brow",
-      "chow",
-      "allow",
-      "somehow",
-      "pow"
+      "brow"
     ]
   },
   {
@@ -742,11 +546,7 @@ window.WORD_FAMILIES = [
       "down",
       "town",
       "crown",
-      "frown",
-      "gown",
-      "drown",
-      "downtown",
-      "countdown"
+      "frown"
     ]
   }
 ];
