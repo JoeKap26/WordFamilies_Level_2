@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1446a0">
   <meta name="description" content="A tap-to-hear word-family reading app made for Ari and Elara.">
-  <title>Ari & Elara's Word Families Level 2</title>
+  <title>Elari Word Families</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231446a0'/%3E%3Cpath d='M14 18h36v29H14z' fill='white'/%3E%3Cpath d='M32 18v29M18 25h10M36 25h10M18 32h10M36 32h10' stroke='%23ffcc3d' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
   <style>
     #familyPage .prompt {
@@ -290,7 +290,7 @@
       .welcome-children { max-height: 120px; margin-bottom: 10px; }
     }
   
-    /* Match the Level 2 welcome title, with the level underneath. */
+    /* Match the Level 1 welcome title, with the level underneath. */
     .start-card h1.level-one-title { font-size:clamp(2.65rem, 9vw, 3.75rem); line-height:1.12; margin:8px 0 30px; font-weight:900; }
     .level-one-title > span { display:block; }
     .level-one-title > span + span { margin-top:8px; }
@@ -482,6 +482,7 @@
   
 </head>
 <body>
+  <audio id="introSong" preload="auto" src="audio/songs/Intro.mp3"></audio>
   <dialog id="parentSettings" aria-label="Parent Settings"><h2>Parent Settings</h2><div id="parentSettingsContent"></div></dialog>
   <dialog class="welcome-notice" id="welcomeNotice" aria-label="Welcome" aria-describedby="welcomeNoticeMessage">
     <p id="welcomeNoticeMessage">I created this entire word-family project for Elara and Ari! Names and progress are saved in your browser, clearing the site’s stored data removes them.</p>
@@ -823,7 +824,7 @@ let label = button.querySelector('.family-completion');
 if (completed && !label) {
   label = document.createElement('span');
   label.className = 'family-completion';
-  label.textContent = '✓ Completed';
+  label.textContent = '✓ Completed 🎵';
   button.append(label);
 } else if (!completed && label) {
   label.remove();
@@ -833,7 +834,7 @@ if (completed && !label) {
           const sentencesDone = sentenceData.filter(sentence => sentence.family === item.family && foundSentences.has(sentence.file)).length;
           const quizDone = familyQuizCount(item);
           const visibleCounts = [
-            ['Words', wordsDone, item.words.length], ['Sentences', sentencesDone, sentenceData.filter(s => s.family === item.family).length], ['Family Challenge', quizDone, 3]
+            ['Words', wordsDone, item.words.length], ['Sentences', sentencesDone, sentenceData.filter(s => s.family === item.family).length], ['Challenge', quizDone, 3]
           ].filter(([, count]) => count > 0);
           if (visibleCounts.length) {
             if (!progress) {
@@ -866,6 +867,7 @@ if (completed && !label) {
       }
 
       function stopAudio(clearSentences = true) {
+        stopFamilySong();
         cancelAutoAdvance();
         cancelFamilyQuizAudio();
         if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -1471,7 +1473,27 @@ if (completed && !label) {
         }
         return index;
       }
-      function openFamily(familyIndex) { resumeFamily(familyIndex); }
+      // A completed family's song is unlocked on the family picker.
+      const familySong = new Audio();
+      familySong.preload = 'none';
+      function stopFamilySong() {
+        familySong.pause();
+        familySong.currentTime = 0;
+      }
+      function openFamily(familyIndex) {
+        stopIntroSong();
+        stopFamilySong();
+        if (activeUser && familyIsComplete(families[familyIndex], activeUser)) {
+          stopAudio();
+          showWordsAt(familyIndex);
+          // E.g. -at family => audio/songs/-at.mp3
+          familySong.src = `audio/songs/${encodeURIComponent(families[familyIndex].family)}.mp3`;
+          const playing = familySong.play();
+          if (playing && typeof playing.catch === 'function') playing.catch(() => {});
+          return;
+        }
+        resumeFamily(familyIndex);
+      }
       function resumeFamily(familyIndex, preferred) {
         if (!activeUser) return;
         const start = (familyIndex + families.length) % families.length;
@@ -1498,11 +1520,25 @@ if (completed && !label) {
           ? (continueFamily(user) < 0 ? 'All families complete!' : `${families[continueFamily(user)].family} family · Next unfinished activity`) : '';
       }
       previousUser.addEventListener('change', updateContinueDetail);
+      // Start the intro from the user's click and keep playing on the family grid.
+      const introSong = document.getElementById('introSong');
+      function stopIntroSong() {
+        introSong.pause();
+        introSong.currentTime = 0;
+      }
+      function startWithIntro(next) {
+        stopIntroSong();
+        next(); // Navigate immediately; the song continues on the family page.
+        const playback = introSong.play();
+        if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+      }
+      introSong.addEventListener('error', stopIntroSong);
       document.querySelector('#continuePractice').addEventListener('click', () => {
         const user = users.find(u => u.id === previousUser.value);
-        if (user) startUser(user, true);
+        if (user) { stopIntroSong(); startUser(user, true); }
       });
       function showUserPicker() {
+        stopIntroSong();
         familyGroupQuizPage.hidden = true;
         closeWordHub();
         stopAudio();
@@ -1544,8 +1580,8 @@ if (completed && !label) {
         practicePage.hidden = false;
         burst.classList.remove('show');
         render();
-        if (resume) resumeFamily(index);
-        else showFamilySelection();
+        if (resume) resumeFamily(Math.max(0, continueFamily(user)));
+        else showFamilySelection(); // New users begin on the family selection page.
       }
 
       document.querySelector('#userForm').addEventListener('submit', event => {
@@ -1593,7 +1629,7 @@ if (completed && !label) {
         nameError.hidden = true;
         const user = { id: crypto.randomUUID(), name, read: [], found: [], foundSentences: [], family: 0 };
         users.push(user);
-        startUser(user);
+        startWithIntro(() => startUser(user));
       });
       document.querySelector('#changeName').addEventListener('click', () => {
         saveProgress();
@@ -1918,7 +1954,7 @@ if (completed && !label) {
       layout('practiceUsers').onclick=goUsers;
       layout('layoutBack').onclick=goUsers;
       layout('layoutFamilies').onclick=goFamilies;
-      layout('homeContinue').onclick=()=>resumeFamily(Math.max(0,continueFamily(activeUser)));
+      layout('homeContinue').onclick=()=>{stopIntroSong();resumeFamily(Math.max(0,continueFamily(activeUser)));};
       layout('homeFinal').onclick=()=>{q('openAllWords').click();q('quizTab').click();};
       layout('layoutWords').onclick=()=>resumeFamily(index,'words');
       layout('layoutSentences').onclick=()=>resumeFamily(index,'sentences');
